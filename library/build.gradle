@@ -55,29 +55,60 @@ dependencies {
 }
 
 afterEvaluate {
-    lint.dependsOn ktlintCheck
-}
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.release
 
-ext {
-    PUBLISH_GROUP_ID = 'com.suddenh4x.ratingdialog'
-    PUBLISH_VERSION = "$version"
-    PUBLISH_ARTIFACT_ID = 'awesome-app-rating'
-    PUBLISH_DESCRIPTION = 'A highly customizable Android library providing a dialog, which asks the user to rate ' +
-            'the app or give feedback. You can also use the library to show the Google in-app review easily under ' +
-            'certain conditions.'
-    PUBLISH_URL = 'https://github.com/SuddenH4X/awesome-app-rating'
-    PUBLISH_LICENSE_NAME = 'Apache License'
-    PUBLISH_LICENSE_URL =
-            'https://github.com/SuddenH4X/awesome-app-rating/blob/master/LICENSE'
-    PUBLISH_DEVELOPER_ID = 'SuddenH4X'
-    PUBLISH_DEVELOPER_NAME = 'Sascha Kühne'
-    PUBLISH_DEVELOPER_EMAIL = 'SuddenH4X@users.noreply.github.com'
-    PUBLISH_SCM_CONNECTION =
-            'scm:git:github.com/SuddenH4X/awesome-app-rating.git'
-    PUBLISH_SCM_DEVELOPER_CONNECTION =
-            'scm:git:ssh://github.com:SuddenH4X/awesome-app-rating.git'
-    PUBLISH_SCM_URL =
-            'https://github.com/SuddenH4X/awesome-app-rating/tree/master'
-}
+                artifact androidJavadocsJar
+                artifact androidSourcesJar
 
-apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+                groupId = 'com.suddenh4x.ratingdialog'
+                artifactId = 'library'
+                version = '2.7.0'
+
+                pom {
+                    name = 'Android In-App Billing v3 Library'
+                    description = 'A lightweight implementation of Android In-app Billing Version 3'
+                    url = 'https://github.com/SuddenH4X/awesome-app-rating'
+                    packaging = 'aar'
+                    licenses {
+                        license {
+                            name = 'The Apache Software License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'SuddenH4X'
+                            name = 'SuddenH4X'
+                            email = 'SuddenH4X@gmail.com'
+                        }
+                    }
+                    scm {
+                        url = 'scm:git@github.com:SuddenH4X/awesome-app-rating.git'
+                        connection = 'scm:git@github.com:SuddenH4X/awesome-app-rating.git'
+                        developerConnection = 'scm:git@github.com:SuddenH4X/awesome-app-rating.git'
+                    }
+                }
+            }
+        }
+        if (project.hasProperty('sonatypeRepo')) {
+            repositories {
+                maven {
+                    url sonatypeRepo
+                    credentials {
+                        username sonatypeUsername
+                        password sonatypePassword
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        required { gradle.taskGraph.hasTask("publish") }
+        sign publishing.publications.maven
+    }
+}
