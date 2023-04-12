@@ -371,6 +371,16 @@ object AppRating {
                     }
                 } else {
                     onGoogleInAppReviewFailure("The initial request  wasn't successful.")
+                    RatingLogger.debug("In-app review from Google hasn't been activated. Showing library dialog now.")
+                    val fragmentActivity = componentActivity as? FragmentActivity
+                    fragmentActivity?.let {
+                        RateDialogFragment.newInstance(dialogOptions)
+                            .show(fragmentActivity.supportFragmentManager, TAG)
+                    }
+                        ?: RatingLogger.error(
+                            "To use the libraries dialog your activity has to extend from " +
+                                "FragmentActivity (e.g. AppCompatActvity).",
+                        )
                 }
             }
         }
