@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 def version = "2.7.0"
 
